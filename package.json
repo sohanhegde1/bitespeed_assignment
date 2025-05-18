@@ -1,0 +1,44 @@
+{
+  "name": "bitespeed-identity",
+  "version": "1.0.0",
+  "description": "Bitespeed Backend Task: Identity Reconciliation",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc && npm run copy-public",
+    "copy-public": "mkdir -p dist/public && cp -r public/* dist/public/ 2>/dev/null || true",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.0.3",
+    "pg": "^8.10.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/cors": "^2.8.13",
+    "@types/node": "^18.15.11",
+    "@types/pg": "^8.6.6",
+    "typescript": "^5.0.3",
+    "ts-node": "^10.9.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  
+  "keywords": [
+    "identity",
+    "reconciliation",
+    "bitespeed",
+    "api",
+    "postgresql"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/bitespeed-identity/issues"
+  },
+  "homepage": "https://github.com/yourusername/bitespeed-identity#readme"
+}
