@@ -83,7 +83,7 @@ CREATE TABLE contacts (
 
 ### Prerequisites
 
-- Node.js (v16+)
+- Node.js 
 - PostgreSQL
 
 ### Installation
