@@ -27,8 +27,8 @@ interface Contact {
 }
 
 interface ContactRequest {
-  email?: string | null;
-  phoneNumber?: string | null;
+  email: string; // Changed from optional to required
+  phoneNumber: string; // Changed from optional to required
 }
 
 interface IdentifyResponse {
@@ -228,17 +228,17 @@ const htmlContent = `<!DOCTYPE html>
         
         <form id="contactForm">
             <div class="form-group">
-                <label for="email">Email (optional):</label>
-                <input type="email" id="email" name="email" placeholder="Enter email address">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter email address" required>
             </div>
             
             <div class="form-group">
-                <label for="phoneNumber">Phone Number (optional):</label>
-                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number" required>
             </div>
             
             <div class="form-group">
-                <p class="note">Note: At least one of email or phone number must be provided.</p>
+                <p class="note">Note: Both email and phone number are required.</p>
             </div>
             
             <button type="submit">Submit</button>
@@ -279,8 +279,8 @@ const htmlContent = `<!DOCTYPE html>
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
             
             // Validate input
-            if (!email && !phoneNumber) {
-                errorOutput.textContent = 'Error: At least one of email or phone number must be provided.';
+            if (!email || !phoneNumber) {
+                errorOutput.textContent = 'Error: Both email and phone number are required.';
                 errorOutput.classList.remove('hidden');
                 return;
             }
@@ -290,9 +290,10 @@ const htmlContent = `<!DOCTYPE html>
             successOutput.classList.add('hidden');
             
             // Prepare request body
-            const requestBody = {};
-            if (email) requestBody.email = email;
-            if (phoneNumber) requestBody.phoneNumber = phoneNumber;
+            const requestBody = {
+                email: email,
+                phoneNumber: phoneNumber
+            };
             
             // Display request
             requestOutput.textContent = JSON.stringify(requestBody, null, 2);
@@ -411,16 +412,16 @@ app.post('/identify', async (req: Request, res: Response) => {
     
     const { email, phoneNumber } = req.body as ContactRequest;
     
-    // Validate request - at least one of email or phoneNumber is required
-    if (!email && !phoneNumber) {
+    // Validate request - both email and phoneNumber are now required
+    if (!email || !phoneNumber) {
       console.warn('Missing required fields');
       return res.status(400).json({ 
-        error: 'At least one of email or phoneNumber is required' 
+        error: 'Both email and phoneNumber are required' 
       });
     }
     
     // Convert phoneNumber to string if it's a number
-    const phone = phoneNumber ? String(phoneNumber) : null;
+    const phone = String(phoneNumber);
     
     // Process the contact
     const result = await identifyContact(email, phone);
@@ -511,7 +512,7 @@ async function initializeDb() {
 }
 
 // Function to identify and process contacts
-async function identifyContact(email: string | null | undefined, phoneNumber: string | null | undefined): Promise<IdentifyResponse> {
+async function identifyContact(email: string, phoneNumber: string): Promise<IdentifyResponse> {
   const client = await pool.connect();
   
   try {
@@ -546,8 +547,8 @@ async function identifyContact(email: string | null | undefined, phoneNumber: st
       return {
         contact: {
           primaryContactId: newContact.rows[0].id,
-          emails: email ? [email] : [],
-          phoneNumbers: phoneNumber ? [phoneNumber] : [],
+          emails: [email],
+          phoneNumbers: [phoneNumber],
           secondaryContactIds: []
         }
       };
